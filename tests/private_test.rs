@@ -15,18 +15,18 @@ use speculate::speculate;
 #[cfg(test)]
 speculate! {
         describe "privateTest" {
-                fn DydxClient() -> DydxClient<'static> {
+                fn DydxClient() -> DydxClient {
                         let api_key = ApiKeyCredentials {
                                 // test account
-                                key: "6761e340-7c01-065e-d3e4-8338bfa4f0b7",
-                                secret: "kaWlSJiFfIyIa0kPkGepTwVhtWzVxmvvXMezzRw2",
-                                passphrase: "-VlJxCva5OhyhQEXWtFy"
+                                key: String::from("6761e340-7c01-065e-d3e4-8338bfa4f0b7"),
+                                secret: String::from("kaWlSJiFfIyIa0kPkGepTwVhtWzVxmvvXMezzRw2"),
+                                passphrase: String::from("-VlJxCva5OhyhQEXWtFy")
                         };
                         let options = ClientOptions {
                                 network_id: Some(TESTNET_NETWORK_ID),
                                 api_timeout: None,
                                 api_key_credentials: Some(api_key),
-                                stark_private_key: Some(TEST_STARK_PRIVATE_KEY),
+                                stark_private_key: Some(String::from(TEST_STARK_PRIVATE_KEY)),
                                 eth_private_key: None
                         };
                         DydxClient::new(TESTNET_API_URL, options)
@@ -97,18 +97,18 @@ speculate! {
 
                 it "getAccountUnauthorized" {
                         b!(async {
-                                fn DydxClientNonAuth() -> DydxClient<'static> {
+                                fn DydxClientNonAuth() -> DydxClient {
                                         let api_key = ApiKeyCredentials {
                                                 // account2 testnet
-                                                key: "ed85a071-c6b4-b4f1-c965-efb238d16c5e",
-                                                secret: "1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU",
-                                                passphrase: "CfbXaq6O-Yd3jKOqh10a"
+                                                key: String::from("ed85a071-c6b4-b4f1-c965-efb238d16c5e"),
+                                                secret: String::from("1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU"),
+                                                passphrase: String::from("CfbXaq6O-Yd3jKOqh10a")
                                         };
                                         let options = ClientOptions {
                                                 network_id: Some(3),
                                                 api_timeout: None,
                                                 api_key_credentials: Some(api_key),
-                                                stark_private_key: Some("0657eaa201ba872f72c0e6e2db278d8cda1b60de4313f02213aaf2b3421bff56"),
+                                                stark_private_key: Some(String::from("0657eaa201ba872f72c0e6e2db278d8cda1b60de4313f02213aaf2b3421bff56")),
                                                 eth_private_key: None
                                         };
                                         // DydxClient::new("https://api.dydx.exchange", Some(options))

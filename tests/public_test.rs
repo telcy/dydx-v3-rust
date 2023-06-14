@@ -1,7 +1,7 @@
 macro_rules! b {
-        ($e:expr) => {
-                tokio_test::block_on($e)
-        };
+    ($e:expr) => {
+        tokio_test::block_on($e)
+    };
 }
 
 use dydx_v3_rust::constants::*;
@@ -13,7 +13,7 @@ use speculate::speculate;
 #[cfg(test)]
 speculate! {
         describe "publicTest" {
-                fn DydxClient() -> DydxClient<'static> {
+                fn DydxClient() -> DydxClient {
 
                         let options: ClientOptions = ClientOptions {
                                 network_id: None,

@@ -1,7 +1,7 @@
 macro_rules! b {
-        ($e:expr) => {
-                tokio_test::block_on($e)
-        };
+    ($e:expr) => {
+        tokio_test::block_on($e)
+    };
 }
 
 use dydx_v3_rust::constants::*;
@@ -13,13 +13,13 @@ use speculate::speculate;
 #[cfg(test)]
 speculate! {
         describe "onboardingTest" {
-                fn DydxClient() -> DydxClient<'static> {
+                fn DydxClient() -> DydxClient {
                         let options = ClientOptions {
                                 network_id: Some(TESTNET_NETWORK_ID),
                                 api_timeout: None,
                                 api_key_credentials: None,
                                 stark_private_key: None,
-                                eth_private_key: Some(TEST_PRIVATE_KEY),
+                                eth_private_key: Some(String::from(TEST_PRIVATE_KEY)),
                         };
                         DydxClient::new(TESTNET_API_URL, options)
 

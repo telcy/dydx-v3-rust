@@ -7,32 +7,32 @@ use crate::modules::private::Private;
 use crate::modules::public::Public;
 
 #[derive(Debug)]
-pub struct ClientOptions<'a> {
+pub struct ClientOptions {
     pub network_id: Option<usize>,
     pub api_timeout: Option<u64>,
-    pub api_key_credentials: Option<ApiKeyCredentials<'a>>,
-    pub stark_private_key: Option<&'a str>,
-    pub eth_private_key: Option<&'a str>,
+    pub api_key_credentials: Option<ApiKeyCredentials>,
+    pub stark_private_key: Option<String>,
+    pub eth_private_key: Option<String>,
 }
 
 #[readonly::make]
 #[derive(Debug, Clone)]
-pub struct DydxClient<'a> {
+pub struct DydxClient {
     #[readonly]
     pub api_timeout: Option<u64>,
-    pub public: Public<'a>,
-    pub private: Option<Private<'a>>,
-    pub eth_private: Option<EthPrivate<'a>>,
-    pub onboarding: Option<Onboarding<'a>>,
+    pub public: Public,
+    pub private: Option<Private>,
+    pub eth_private: Option<EthPrivate>,
+    pub onboarding: Option<Onboarding>,
 }
 
-impl DydxClient<'_> {
-    pub fn new<'a>(host: &'a str, _options: ClientOptions<'a>) -> DydxClient<'a> {
+impl DydxClient {
+    pub fn new(host: &str, _options: ClientOptions) -> DydxClient {
         let network_id = _options.network_id.unwrap_or(1);
         let api_timeout = _options.api_timeout.unwrap_or(10);
         DydxClient {
             api_timeout: None,
-            
+
             public: Public::new(host, api_timeout),
             private: match _options.api_key_credentials {
                 Some(v) => Some(Private::new(
@@ -40,18 +40,16 @@ impl DydxClient<'_> {
                     network_id,
                     api_timeout,
                     v,
-                    _options.stark_private_key,
+                    _options.stark_private_key.as_deref(),
                 )),
                 None => None,
             },
             eth_private: match _options.eth_private_key {
-                Some(v) => Some(EthPrivate::new(
-                    host, network_id, api_timeout,v,
-                )),
+                Some(ref v) => Some(EthPrivate::new(host, network_id, api_timeout, v.as_str())),
                 None => None,
             },
             onboarding: match _options.eth_private_key {
-                Some(r) => Some(Onboarding::new(host, network_id, api_timeout, r)),
+                Some(ref r) => Some(Onboarding::new(host, network_id, api_timeout, r.as_str())),
                 None => None,
             },
         }

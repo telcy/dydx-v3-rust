@@ -27,10 +27,10 @@ pub struct ApiKeyResponseObject {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ApiKeyCredentials<'a> {
-    pub key: &'a str,
-    pub secret: &'a str,
-    pub passphrase: &'a str,
+pub struct ApiKeyCredentials {
+    pub key: String,
+    pub secret: String,
+    pub passphrase: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

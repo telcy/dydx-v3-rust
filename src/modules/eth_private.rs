@@ -7,23 +7,28 @@ use serde::Deserialize;
 use std::time::Duration;
 
 #[derive(Debug, Clone)]
-pub struct EthPrivate<'a> {
+pub struct EthPrivate {
     client: reqwest::Client,
-    host: &'a str,
+    host: String,
     network_id: usize,
-    eth_private_key: &'a str,
+    eth_private_key: String,
 }
 
-impl EthPrivate<'_> {
-    pub fn new<'a>(host: &'a str, network_id: usize, api_timeout: u64, eth_private_key: &'a str) -> EthPrivate<'a> {
+impl EthPrivate {
+    pub fn new(
+        host: &str,
+        network_id: usize,
+        api_timeout: u64,
+        eth_private_key: &str,
+    ) -> EthPrivate {
         EthPrivate {
             client: reqwest::ClientBuilder::new()
                 .timeout(Duration::from_secs(api_timeout))
                 .build()
                 .expect("Client::new()"),
-            host,
+            host: host.to_string(),
             network_id,
-            eth_private_key,
+            eth_private_key: eth_private_key.to_string(),
         }
     }
 
@@ -71,7 +76,7 @@ impl EthPrivate<'_> {
             request_path.as_str(),
             "{}",
             &iso_timestamp,
-            self.eth_private_key,
+            self.eth_private_key.as_str(),
         )
         .unwrap();
 
@@ -131,7 +136,7 @@ impl EthPrivate<'_> {
             request_path.as_str(),
             "{}",
             &iso_timestamp,
-            self.eth_private_key,
+            self.eth_private_key.as_str(),
         )
         .unwrap();
 

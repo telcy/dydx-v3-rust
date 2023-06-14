@@ -13,31 +13,34 @@ use sha2::Sha256;
 use std::time::Duration;
 
 #[derive(Debug, Clone)]
-pub struct Private<'a> {
+pub struct Private {
     client: reqwest::Client,
-    host: &'a str,
+    host: String,
     network_id: usize,
-    api_key_credentials: ApiKeyCredentials<'a>,
-    stark_private_key: Option<&'a str>,
+    api_key_credentials: ApiKeyCredentials,
+    stark_private_key: Option<String>,
 }
 
-impl Private<'_> {
-    pub fn new<'a>(
-        host: &'a str,
+impl Private {
+    pub fn new(
+        host: &str,
         network_id: usize,
         api_timeout: u64,
-        api_key_credentials: ApiKeyCredentials<'a>,
-        stark_private_key: Option<&'a str>,
-    ) -> Private<'a> {
+        api_key_credentials: ApiKeyCredentials,
+        stark_private_key: Option<&str>,
+    ) -> Private {
         Private {
             client: reqwest::ClientBuilder::new()
                 .timeout(Duration::from_secs(api_timeout))
                 .build()
                 .expect("Client::new()"),
-            host,
+            host: host.to_string(),
             network_id,
             api_key_credentials,
-            stark_private_key,
+            stark_private_key: match stark_private_key {
+                Some(v) => Some(v.to_string()),
+                None => None,
+            },
         }
     }
 
@@ -178,7 +181,7 @@ impl Private<'_> {
             user_params.limit_fee,
             client_id.as_str(),
             user_params.expiration,
-            self.stark_private_key.unwrap(),
+            self.stark_private_key.as_ref().unwrap(),
         )
         .unwrap();
 
@@ -223,7 +226,7 @@ impl Private<'_> {
             user_params.amount,
             &client_id,
             user_params.expiration,
-            self.stark_private_key.unwrap(),
+            self.stark_private_key.as_ref().unwrap(),
         )
         .unwrap();
 
@@ -257,7 +260,7 @@ impl Private<'_> {
             user_params.amount,
             &client_id,
             user_params.expiration,
-            self.stark_private_key.unwrap(),
+            self.stark_private_key.as_ref().unwrap(),
         )
         .unwrap();
 
@@ -308,7 +311,7 @@ impl Private<'_> {
             token_address,
             &client_id,
             user_params.expiration,
-            self.stark_private_key.unwrap(),
+            self.stark_private_key.as_ref().unwrap(),
         )
         .unwrap();
 
@@ -611,8 +614,11 @@ impl Private<'_> {
         let req_builder = req_builder
             .header("DYDX-SIGNATURE", signature.as_str())
             .header("DYDX-TIMESTAMP", iso_timestamp.as_str())
-            .header("DYDX-API-KEY", self.api_key_credentials.key)
-            .header("DYDX-PASSPHRASE", self.api_key_credentials.passphrase)
+            .header("DYDX-API-KEY", self.api_key_credentials.key.as_str())
+            .header(
+                "DYDX-PASSPHRASE",
+                self.api_key_credentials.passphrase.as_str(),
+            )
             .query(&parameters);
 
         let req_builder = if json != "{}" {
@@ -656,7 +662,7 @@ impl Private<'_> {
             }
         }
 
-        let secret = self.api_key_credentials.secret;
+        let secret = self.api_key_credentials.secret.as_str();
         let secret = base64::decode_config(secret, base64::URL_SAFE).unwrap();
 
         let mut mac = Hmac::<Sha256>::new_from_slice(&*secret).unwrap();

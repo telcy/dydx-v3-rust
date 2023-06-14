@@ -7,20 +7,20 @@ pub use super::super::types::*;
 
 #[readonly::make]
 #[derive(Debug, Clone)]
-pub struct Public<'a> {
+pub struct Public {
     client: reqwest::Client,
     #[readonly]
-    pub host: &'a str,
+    pub host: String,
 }
 
-impl Public<'_> {
+impl Public {
     pub fn new(host: &str, api_timeout: u64) -> Public {
         Public {
             client: reqwest::ClientBuilder::new()
                 .timeout(Duration::from_secs(api_timeout))
                 .build()
                 .expect("Client::new()"),
-            host,
+            host: host.into(),
         }
     }
 
