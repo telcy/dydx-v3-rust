@@ -98,7 +98,17 @@ impl EthPrivate {
         match response {
             Ok(response) => match response.status() {
                 StatusCode::OK | StatusCode::CREATED => {
-                    return Ok(response.json::<T>().await.unwrap())
+                    let code = response.status().to_string();
+                    return match response.json::<T>().await {
+                        Ok(v) => Ok(v),
+                        Err(err) => {
+                            let error = ResponseError {
+                                code,
+                                message: err.to_string(),
+                            };
+                            return Err(Box::new(error));
+                        }
+                    };
                 }
                 _ => {
                     let error = ResponseError {
